@@ -1,0 +1,36 @@
+<template>
+
+    <lightning-card title="📥 Borrow Book">
+
+        <div class="slds-p-around_medium">
+
+            <p class="section-title">Select Details</p>
+
+            <!-- Book -->
+            <lightning-combobox
+                label="Select Book"
+                options={bookOptions}
+                onchange={handleBookChange}>
+            </lightning-combobox>
+
+            <!-- Member -->
+            <lightning-combobox
+                label="Select Member"
+                options={memberOptions}
+                onchange={handleMemberChange}
+                class="slds-m-top_small">
+            </lightning-combobox>
+
+            <!-- Button -->
+            <lightning-button
+                label="Borrow Book"
+                variant="brand"
+                onclick={handleBorrow}
+                class="slds-m-top_medium">
+            </lightning-button>
+
+        </div>
+
+    </lightning-card>
+
+</template>
