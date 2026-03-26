@@ -28,14 +28,15 @@
                 <p class="slds-text-color_error">{error}</p>
             </template>
 
-            <!-- RESULTS TABLE -->
+            <!-- 🔥 DATATABLE (UPDATED PART) -->
             <template if:true={books}>
-                <template for:each={books} for:item="book">
-                    <div key={book.title} class="slds-box slds-m-top_small">
-                        <p><b>{book.title}</b></p>
-                        <p>{book.author}</p>
-                    </div>
-                </template>
+                <lightning-datatable
+                    key-field="title"
+                    data={books}
+                    columns={columns}
+                    onrowaction={handleRowAction}
+                    class="slds-m-top_medium">
+                </lightning-datatable>
             </template>
 
         </div>

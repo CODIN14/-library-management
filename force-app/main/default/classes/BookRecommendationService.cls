@@ -7,6 +7,32 @@ public with sharing class BookRecommendationService {
     }
 
     @AuraEnabled
+    public static String addBookToLibrary(String title, String author){
+
+        // 🔍 Check if book already exists
+        List<Book__c> existing = [
+            SELECT Id FROM Book__c 
+            WHERE Name = :title 
+            LIMIT 1
+        ];
+
+        if(!existing.isEmpty()){
+            return 'EXISTS';
+        }
+
+        // ➕ Create new book
+        Book__c book = new Book__c();
+
+        book.Name = title;
+        book.Author__c = author;
+        book.Available_Copies__c = 1;
+
+        insert book;
+
+        return 'ADDED';
+    }
+
+    @AuraEnabled
     public static List<BookWrapper> searchBooks(String query){
 
     Http http = new Http();
