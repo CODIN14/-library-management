@@ -1,35 +1,41 @@
 <template>
 
-    <lightning-card title="📚 Book Recommendation">
+    <lightning-card title="📚 Book Explorer">
 
         <div class="slds-p-around_medium">
 
-            <!-- 🔥 BUTTON -->
+            <!-- SEARCH INPUT -->
+            <lightning-input
+                label="Search Books"
+                onchange={handleChange}>
+            </lightning-input>
+
+            <!-- BUTTON -->
             <lightning-button
-                label="Get Recommendation"
-                onclick={handleClick}
-                disabled={isLoading}>
+                label="Search"
+                onclick={handleSearch}
+                disabled={isLoading}
+                class="slds-m-top_medium">
             </lightning-button>
 
-            <!-- 🔄 LOADING SPINNER -->
+            <!-- SPINNER -->
             <template if:true={isLoading}>
-                <lightning-spinner 
-                    alternative-text="Loading"
-                    size="medium">
-                </lightning-spinner>
+                <lightning-spinner alternative-text="Loading"></lightning-spinner>
             </template>
 
-            <!-- ❌ ERROR -->
+            <!-- ERROR -->
             <template if:true={error}>
-                <p class="slds-text-color_error slds-m-top_medium">
-                    {error}
-                </p>
+                <p class="slds-text-color_error">{error}</p>
             </template>
 
-            <!-- ✅ RESULT -->
-            <template if:true={book}>
-                <p class="slds-m-top_medium"><b>{book.title}</b></p>
-                <p>{book.author}</p>
+            <!-- RESULTS TABLE -->
+            <template if:true={books}>
+                <template for:each={books} for:item="book">
+                    <div key={book.title} class="slds-box slds-m-top_small">
+                        <p><b>{book.title}</b></p>
+                        <p>{book.author}</p>
+                    </div>
+                </template>
             </template>
 
         </div>

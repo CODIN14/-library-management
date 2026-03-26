@@ -7,46 +7,46 @@ public with sharing class BookRecommendationService {
     }
 
     @AuraEnabled
-    public static BookWrapper getRecommendation(){
+    public static List<BookWrapper> searchBooks(String query){
 
-        // STEP 1: Create HTTP request
-        Http http = new Http();
-        HttpRequest req = new HttpRequest();
+    Http http = new Http();
+    HttpRequest req = new HttpRequest();
 
-        // STEP 2: API endpoint
-        req.setEndpoint('https://openlibrary.org/search.json?q=fiction');
-        req.setMethod('GET');
+    String endpoint = 'https://openlibrary.org/search.json?q=' + query;
 
-        // STEP 3: Send request
-        HttpResponse res = http.send(req);
+    req.setEndpoint(endpoint);
+    req.setMethod('GET');
 
-        // STEP 4: Convert JSON → Map
-        Map<String, Object> data =
-            (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+    HttpResponse res = http.send(req);
 
-        // STEP 5: Get list of books
-        List<Object> docs = (List<Object>) data.get('docs');
+    Map<String, Object> data =
+        (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
 
-        if(docs == null || docs.isEmpty()){
-            return null;
+    List<Object> docs = (List<Object>) data.get('docs');
+
+    List<BookWrapper> books = new List<BookWrapper>();
+
+    if(docs != null){
+
+        Integer maxResults = Math.min(5, docs.size()); // 🔥 limit results
+
+        for(Integer i = 0; i < maxResults; i++){
+
+            Map<String, Object> bookData = (Map<String, Object>) docs[i];
+
+            BookWrapper book = new BookWrapper();
+
+            book.title = (String) bookData.get('title');
+
+            List<Object> authors = (List<Object>) bookData.get('author_name');
+            if(authors != null && !authors.isEmpty()){
+                book.author = (String) authors[0];
+            }
+
+            books.add(book);
         }
-
-        // STEP 6: Pick random first book
-        Integer size = docs.size();
-        Integer randomIndex = Math.mod(Math.abs(Crypto.getRandomInteger()), size);
-
-        Map<String, Object> firstBook = (Map<String, Object>) docs[randomIndex];
-
-        // STEP 7: Create wrapper
-        BookWrapper book = new BookWrapper();
-
-        book.title = (String) firstBook.get('title');
-
-        List<Object> authors = (List<Object>) firstBook.get('author_name');
-        if(authors != null && !authors.isEmpty()){
-            book.author = (String) authors[0];
-        }
-
-        return book;
     }
+
+    return books;
+}
 }

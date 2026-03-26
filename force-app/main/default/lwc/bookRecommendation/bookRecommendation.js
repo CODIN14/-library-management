@@ -1,27 +1,32 @@
 import { LightningElement } from 'lwc';
-import getRecommendation from '@salesforce/apex/BookRecommendationService.getRecommendation';
+import searchBooks from '@salesforce/apex/BookRecommendationService.searchBooks';
 
 export default class BookRecommendation extends LightningElement {
 
-    book;
-    isLoading = false; // 🔥 NEW
+    query = '';
+    books = [];
+    isLoading = false;
     error;
 
-    handleClick(){
+    handleChange(event){
+        this.query = event.target.value;
+    }
 
-        this.isLoading = true;   // start loading
-        this.error = null;       // reset error
+    handleSearch(){
 
-        getRecommendation()
+        this.isLoading = true;
+        this.error = null;
+
+        searchBooks({ query: this.query })
         .then(result => {
-            this.book = result;
+            this.books = result;
         })
         .catch(error => {
-            this.error = 'Something went wrong';
+            this.error = 'Failed to fetch books';
             console.error(error);
         })
         .finally(() => {
-            this.isLoading = false; // stop loading
+            this.isLoading = false;
         });
     }
 }
