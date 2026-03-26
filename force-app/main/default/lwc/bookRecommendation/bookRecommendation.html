@@ -1,0 +1,39 @@
+<template>
+
+    <lightning-card title="📚 Book Recommendation">
+
+        <div class="slds-p-around_medium">
+
+            <!-- 🔥 BUTTON -->
+            <lightning-button
+                label="Get Recommendation"
+                onclick={handleClick}
+                disabled={isLoading}>
+            </lightning-button>
+
+            <!-- 🔄 LOADING SPINNER -->
+            <template if:true={isLoading}>
+                <lightning-spinner 
+                    alternative-text="Loading"
+                    size="medium">
+                </lightning-spinner>
+            </template>
+
+            <!-- ❌ ERROR -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-top_medium">
+                    {error}
+                </p>
+            </template>
+
+            <!-- ✅ RESULT -->
+            <template if:true={book}>
+                <p class="slds-m-top_medium"><b>{book.title}</b></p>
+                <p>{book.author}</p>
+            </template>
+
+        </div>
+
+    </lightning-card>
+
+</template>
