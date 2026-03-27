@@ -1,9 +1,14 @@
 import { LightningElement, wire } from 'lwc';
+import { publish, MessageContext } from 'lightning/messageService';
+import BORROW_CHANNEL from '@salesforce/messageChannel/borrowChannel__c';
 
 import getBorrowRecords from '@salesforce/apex/ReturnController.getBorrowRecords';
 import returnBook from '@salesforce/apex/BorrowActionController.returnBook';
 
 export default class ReturnBookPanel extends LightningElement {
+
+    @wire(MessageContext)
+    messageContext;
 
     connectedCallback(){
         console.log('COMPONENT LOADED');
@@ -38,6 +43,12 @@ export default class ReturnBookPanel extends LightningElement {
         .then(() => {
             console.log('APEX SUCCESS');
             alert('Book returned successfully');
+
+            // 🔥 Broadcast on the same channel used by dashboard
+            publish(this.messageContext, BORROW_CHANNEL, {
+                status: 'returned'
+            });
+
             // Refresh the records list
             this.records = [];
         })
